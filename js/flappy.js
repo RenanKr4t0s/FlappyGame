@@ -14,10 +14,6 @@ function Barreira(superior = false){
     this.setAltura = altura => corpo.style.height = `${altura}px`
 }
 
-// const b = new Barreira(true);
-// b.setAltura(200);
-// main.appendChild(b.elemento);
-
 function ParDeBarreiras(altura,abertura,x){
     this.elemento = novoElemento('div','two-pipes');
     this.superior = new Barreira(true);
@@ -36,9 +32,6 @@ function ParDeBarreiras(altura,abertura,x){
     this.sortearAbertura();
     this.setX(x);
 }
-
-// const b = new ParDeBarreiras(600,300,1190);
-// main.appendChild(b.elemento);
 
 function BarreirasProntas(altura,largura,abertura,espaco,notificarPonto){
     this.pares = [
@@ -87,14 +80,45 @@ function Passaro (alturaJogo){
     }
     this.setY(alturaJogo/2); 
 }
+function Progresso(){
+    this.elemento = novoElemento('span','progress')
+    this.atualizaPontos=pontos=>{
+        this.elemento.innerHTML = pontos
+    }
+    this.atualizaPontos(0)
+}
 
-const barreiras = new BarreirasProntas (400,1500,200,400)
-const passaro = new Passaro (500)
-main.appendChild(passaro.elemento)
-barreiras.pares.forEach(par =>
-    main.appendChild(par.elemento)
-)
-setInterval(()=>{
-    barreiras.animar()
-    passaro.animar()
-}, 20)
+function FlappyBird(){
+    let pontos = 0
+    const areaDoJogo = document.querySelector('[tp-flappy]')
+    const altura = areaDoJogo.clientHeight
+    const largura = areaDoJogo.clientWidth
+
+    const progresso = new Progresso()
+    const barreiras = new BarreirasProntas(altura, largura, 200, 400,
+         () => progresso.atualizaPontos(++pontos))
+    const passaro = new Passaro (altura)
+
+    areaDoJogo.appendChild(progresso.elemento)
+    areaDoJogo.appendChild(passaro.elemento)
+    barreiras.pares.forEach(par=> areaDoJogo.appendChild(par.elemento))
+    this.start = ()=>{
+        const temporizador = setInterval( ()=>{
+            barreiras.animar()
+            passaro.animar()
+        },20)
+    }
+}
+new FlappyBird().start()
+ 
+// const barreiras = new BarreirasProntas (400,1500,200,400)
+// const passaro = new Passaro (500)
+// main.appendChild(new Progresso().elemento)
+// main.appendChild(passaro.elemento)
+// barreiras.pares.forEach(par =>
+//     main.appendChild(par.elemento)
+// )
+// setInterval(()=>{
+//     barreiras.animar()
+//     passaro.animar()
+// }, 20)

@@ -87,6 +87,24 @@ function Progresso(){
     }
     this.atualizaPontos(0)
 }
+function estaoSobrepostos(eA, eB){
+    const a = eA.getBoundingClientRect();
+    const b = eB.getBoundingClientRect();
+
+    const horizontal = a.left + a.width >= b.left && b.left + b.width >= a.left
+    const vertical = a.top + a.height >= b.top && b.top + b.height >= a.top
+
+    return horizontal && vertical
+}
+function colidiu (passaro, barreiras){
+    let colidiu = false
+    barreiras.pares.forEach(parDeBarreiras => {
+        const superior = parDeBarreiras.superior.elemento;
+        const inferior = parDeBarreiras.inferior.elemento;
+        colidiu = estaoSobrepostos(passaro.elemento, superior) || estaoSobrepostos(passaro.elemento,inferior);
+    })
+    return colidiu
+}
 
 function FlappyBird(){
     let pontos = 0
@@ -95,7 +113,7 @@ function FlappyBird(){
     const largura = areaDoJogo.clientWidth
 
     const progresso = new Progresso()
-    const barreiras = new BarreirasProntas(altura, largura, 200, 400,
+    const barreiras = new BarreirasProntas(altura, largura, 250, 450,
          () => progresso.atualizaPontos(++pontos))
     const passaro = new Passaro (altura)
 
@@ -106,6 +124,9 @@ function FlappyBird(){
         const temporizador = setInterval( ()=>{
             barreiras.animar()
             passaro.animar()
+            if(colidiu(passaro,barreiras)){
+                clearInterval(temporizador);  
+            }
         },20)
     }
 }
